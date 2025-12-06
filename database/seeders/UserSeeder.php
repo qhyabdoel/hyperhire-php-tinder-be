@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Person;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
-class PersonSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     public function run(): void
     {
@@ -32,8 +33,10 @@ class PersonSeeder extends Seeder
             $lastName = $lastNames[array_rand($lastNames)];
             $location = $cities[array_rand($cities)];
             
-            Person::create([
+            User::create([
                 'name' => $firstName . ' ' . $lastName,
+                'email' => strtolower($firstName . '.' . $lastName . $i . '@example.com'),
+                'password' => Hash::make('password'),
                 'age' => rand(18, 45),
                 'pictures' => [
                     'https://via.placeholder.com/400x500?text=' . urlencode($firstName) . '+1',

@@ -18,6 +18,6 @@ class UserLike extends Model
 
     public function person()
     {
-        return $this->belongsTo(Person::class);
+        return $this->belongsTo(User::class, 'person_id');
     }
 }

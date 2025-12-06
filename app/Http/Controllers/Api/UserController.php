@@ -3,31 +3,41 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Person;
+use App\Models\User;
 use App\Models\UserLike;
 use Illuminate\Http\Request;
 
-class PersonController extends Controller
+class UserController extends Controller
 {
-    // 1. List recommended people with pagination
+    // 1. List recommended users with pagination
     public function index(Request $request)
     {
-        $user = $request->user();
+        // For testing, use user ID 1
+        $user = User::find(1);
+        if (!$user) {
+            return response()->json(['error' => 'No user found'], 404);
+        }
+        
         $perPage = $request->input('per_page', 10);
         
-        // Get people that user hasn't interacted with
-        $people = Person::whereDoesntHave('userLikes', function($query) use ($user) {
+        // Get users that this user hasn't interacted with (excluding themselves)
+        $users = User::whereDoesntHave('userLikes', function($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
+            ->where('id', '!=', $user->id)
             ->paginate($perPage);
             
-        return response()->json($people);
+        return response()->json($users);
     }
 
-    // 2. Like a person
-    public function like(Request $request, Person $person)
+    // 2. Like a user
+    public function like(Request $request, User $person)
     {
-        $user = $request->user();
+        // For testing, use user ID 1
+        $user = User::find(1);
+        if (!$user) {
+            return response()->json(['error' => 'No user found'], 404);
+        }
         
         // Check if already liked/disliked
         $existingLike = UserLike::where('user_id', $user->id)
@@ -35,7 +45,7 @@ class PersonController extends Controller
             ->first();
             
         if ($existingLike) {
-            return response()->json(['message' => 'Already interacted with this person'], 400);
+            return response()->json(['message' => 'Already interacted with this user'], 400);
         }
         
         // Create the like
@@ -51,10 +61,14 @@ class PersonController extends Controller
         return response()->json(['message' => 'Liked successfully']);
     }
 
-    // 3. Dislike a person
-    public function dislike(Request $request, Person $person)
+    // 3. Dislike a user
+    public function dislike(Request $request, User $person)
     {
-        $user = $request->user();
+        // For testing, use user ID 1
+        $user = User::find(1);
+        if (!$user) {
+            return response()->json(['error' => 'No user found'], 404);
+        }
         
         // Check if already liked/disliked
         $existingLike = UserLike::where('user_id', $user->id)
@@ -62,7 +76,7 @@ class PersonController extends Controller
             ->first();
             
         if ($existingLike) {
-            return response()->json(['message' => 'Already interacted with this person'], 400);
+            return response()->json(['message' => 'Already interacted with this user'], 400);
         }
         
         UserLike::create([
@@ -74,15 +88,20 @@ class PersonController extends Controller
         return response()->json(['message' => 'Disliked successfully']);
     }
 
-    // 4. Get liked people list
+    // 4. Get liked users list
     public function likedPeople(Request $request)
     {
-        $user = $request->user();
+        // For testing, use user ID 1
+        $user = User::find(1);
+        if (!$user) {
+            return response()->json(['error' => 'No user found'], 404);
+        }
+        
         $perPage = $request->input('per_page', 10);
         
-        $likedPeople = $user->likedPeople()
+        $likedUsers = $user->likedUsers()
             ->paginate($perPage);
             
-        return response()->json($likedPeople);
+        return response()->json($likedUsers);
     }
 }

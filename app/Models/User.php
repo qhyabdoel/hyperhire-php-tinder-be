@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'age',
+        'pictures',
+        'location',
+        'like_count',
+        'notified',
     ];
 
     /**
@@ -43,21 +48,23 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'pictures' => 'array',
+            'location' => 'array',
+            'notified' => 'boolean',
         ];
     }
 
     /**
-     * Get the people that this user has liked.
+     * Get the users that this user has liked.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function likedPeople()
+    public function likedUsers()
     {
-        return $this->belongsToMany(Person::class, 'user_likes')
+        return $this->belongsToMany(User::class, 'user_likes', 'user_id', 'person_id')
             ->withPivot('is_liked')
             ->wherePivot('is_liked', true);
     }
-
 
     /**
      * Get the likes that this user has created.
@@ -66,6 +73,16 @@ class User extends Authenticatable
      */  
     public function userLikes()
     {
-        return $this->hasMany(UserLike::class);
+        return $this->hasMany(UserLike::class, 'user_id');
+    }
+
+    /**
+     * Get the likes that this user has received.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */  
+    public function receivedLikes()
+    {
+        return $this->hasMany(UserLike::class, 'person_id');
     }
 }
