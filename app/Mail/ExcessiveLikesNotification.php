@@ -14,7 +14,6 @@ class ExcessiveLikesNotification extends Mailable
     use Queueable, SerializesModels;
 
     public User $user;
-    public int $likeCount;
 
     /**
      * Create a new message instance.
@@ -22,7 +21,6 @@ class ExcessiveLikesNotification extends Mailable
     public function __construct(User $user)
     {
         $this->user = $user;
-        $this->likeCount = $user->userLikes()->where('is_liked', true)->count();
     }
 
     /**
@@ -31,7 +29,7 @@ class ExcessiveLikesNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Alert: User Has Exceeded Like Limit',
+            subject: 'Popular Person Alert',
         );
     }
 
@@ -45,7 +43,7 @@ class ExcessiveLikesNotification extends Mailable
             with: [
                 'userName' => $this->user->name,
                 'userEmail' => $this->user->email,
-                'likeCount' => $this->likeCount,
+                'userLikeCount' => $this->user->like_count,
                 'userId' => $this->user->id,
             ],
         );
