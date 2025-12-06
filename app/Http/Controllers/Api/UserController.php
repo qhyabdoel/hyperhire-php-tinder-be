@@ -31,12 +31,18 @@ class UserController extends Controller
     }
 
     // 2. Like a user
-    public function like(Request $request, User $person)
+    public function like(Request $request)
     {
-        // For testing, use user ID 1
-        $user = User::find(1);
-        if (!$user) {
-            return response()->json(['error' => 'No user found'], 404);
+        $request->validate([
+            'liker_id' => 'required|exists:users,id',
+            'liked_id' => 'required|exists:users,id|different:liker_id',
+        ]);
+        
+        $user = User::find($request->liker_id);
+        $person = User::find($request->liked_id);
+        
+        if (!$user || !$person) {
+            return response()->json(['error' => 'User not found'], 404);
         }
         
         // Check if already liked/disliked
@@ -45,10 +51,17 @@ class UserController extends Controller
             ->first();
             
         if ($existingLike) {
-            return response()->json(['message' => 'Already interacted with this user'], 400);
+            // If already liked, return success
+            if ($existingLike->is_liked) {
+                return response()->json(['message' => 'Already liked this user']);
+            }
+            // If disliked, update to liked
+            $existingLike->update(['is_liked' => true]);
+            $person->increment('like_count');
+            return response()->json(['message' => 'Changed from dislike to like']);
         }
         
-        // Create the like
+        // Create new like
         UserLike::create([
             'user_id' => $user->id,
             'person_id' => $person->id,
@@ -62,12 +75,18 @@ class UserController extends Controller
     }
 
     // 3. Dislike a user
-    public function dislike(Request $request, User $person)
+    public function dislike(Request $request)
     {
-        // For testing, use user ID 1
-        $user = User::find(1);
-        if (!$user) {
-            return response()->json(['error' => 'No user found'], 404);
+        $request->validate([
+            'disliker_id' => 'required|exists:users,id',
+            'disliked_id' => 'required|exists:users,id|different:disliker_id',
+        ]);
+        
+        $user = User::find($request->disliker_id);
+        $person = User::find($request->disliked_id);
+        
+        if (!$user || !$person) {
+            return response()->json(['error' => 'User not found'], 404);
         }
         
         // Check if already liked/disliked
@@ -76,9 +95,17 @@ class UserController extends Controller
             ->first();
             
         if ($existingLike) {
-            return response()->json(['message' => 'Already interacted with this user'], 400);
+            // If already disliked, return success
+            if (!$existingLike->is_liked) {
+                return response()->json(['message' => 'Already disliked this user']);
+            }
+            // If liked, update to dislike
+            $existingLike->update(['is_liked' => false]);
+            $person->decrement('like_count');
+            return response()->json(['message' => 'Changed from like to dislike']);
         }
         
+        // Create new dislike
         UserLike::create([
             'user_id' => $user->id,
             'person_id' => $person->id,
@@ -89,12 +116,11 @@ class UserController extends Controller
     }
 
     // 4. Get liked users list
-    public function likedPeople(Request $request)
+    public function likedPeople(Request $request, $id)
     {
-        // For testing, use user ID 1
-        $user = User::find(1);
+        $user = User::find($id);
         if (!$user) {
-            return response()->json(['error' => 'No user found'], 404);
+            return response()->json(['error' => 'User not found'], 404);
         }
         
         $perPage = $request->input('per_page', 10);
