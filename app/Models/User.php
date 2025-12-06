@@ -45,4 +45,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Get the people that this user has liked.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function likedPeople()
+    {
+        return $this->belongsToMany(Person::class, 'user_likes')
+            ->withPivot('is_liked')
+            ->wherePivot('is_liked', true);
+    }
+
+
+    /**
+     * Get the likes that this user has created.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */  
+    public function userLikes()
+    {
+        return $this->hasMany(UserLike::class);
+    }
 }
