@@ -9,5 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('likes:check-excessive')
-    ->everyMinute()
+    ->everyFiveMinutes()
     ->description('Check users who have liked more than 50 people');
