@@ -1,5 +1,5 @@
-# Use the official PHP 8.3 image
-FROM php:8.3-fpm
+# Use PHP 8.4 image (required by Symfony 8 / Laravel 12)
+FROM php:8.4-fpm
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,32 +10,30 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     zip \
     unzip \
-    libpq-dev
-
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+    libpq-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www
 
-# Copy existing application directory contents
+# Copy project files
 COPY . /var/www
 
-# Install dependencies
+# Install Composer dependencies
 RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interaction
 
-# Generate application key
+# Generate app key
 RUN php artisan key:generate --force
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Expose port 9000 and start php-fpm server
+# Expose and run FPM
 EXPOSE 9000
 CMD ["php-fpm"]
