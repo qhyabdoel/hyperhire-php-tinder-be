@@ -239,6 +239,9 @@ return [
          */
         'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', false),
 
+        // Force HTTPS for asset URLs
+        'asset_url' => env('APP_URL', null),
+
         /*
          * Set this to `true` to generate a copy of documentation in yaml format
          */
