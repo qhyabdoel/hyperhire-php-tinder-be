@@ -1,9 +1,6 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",
-    "buildCommand": "composer install --optimize-autoloader --no-scripts --no-interaction",
-    "startCommand": "php artisan serve --host=0.0.0.0 --port=${PORT}",
-    "installCommand": "composer install --optimize-autoloader --no-scripts --no-interaction"
+    "builder": "NIXPACKS"
   }
 }
