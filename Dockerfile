@@ -28,9 +28,6 @@ COPY . /var/www
 # Install Composer dependencies
 RUN composer install --optimize-autoloader --no-dev --no-scripts --no-interaction
 
-# Generate app key
-RUN php artisan key:generate --force
-
 # Permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
