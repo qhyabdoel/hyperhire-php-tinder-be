@@ -50,6 +50,8 @@ return [
         ],
     ],
     'defaults' => [
+        'schemes' => ['https'],
+        'validatorUrl' => null,
         'routes' => [
             /*
              * Route for accessing parsed swagger annotations.
@@ -278,6 +280,8 @@ return [
         'ui' => [
             'display' => [
                 'dark_mode' => env('L5_SWAGGER_UI_DARK_MODE', false),
+                'tryItOutEnabled' => true,
+                'requestSnippetsEnabled' => true,
                 /*
                  * Controls the default expansion setting for the operations and tags. It can be :
                  * 'list' (expands only the tags),
