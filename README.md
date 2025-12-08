@@ -27,30 +27,14 @@
 - `created_at` - timestamp
 - `updated_at` - timestamp
 
-#### password_reset_tokens
-- `email` - Primary Key
-- `token` - string
-- `created_at` - timestamp, nullable
-
-#### sessions
-- `id` - Primary Key
-- `user_id` - Foreign Key to users.id, nullable, indexed
-- `ip_address` - string(45), nullable
-- `user_agent` - text, nullable
-- `payload` - longtext
-- `last_activity` - integer, indexed
-
 ### Relationships
 - A `user` can have many `user_likes` (as liker)
 - A `user` can be liked by many `user_likes` (as likee)
-- A `user` can have multiple `sessions`
-- A `user` can have one `password_reset_token`
 
 ### Indexes
 - Unique constraint on `users.email`
 - Unique constraint on `user_likes` (user_id, person_id) to prevent duplicate likes
 - Indexes on foreign keys for performance
-- Index on `sessions.last_activity` for session management
 
 ### Notes
 - The `like_count` in the users table is denormalized for performance reasons
