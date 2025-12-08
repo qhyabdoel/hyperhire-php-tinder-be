@@ -50,28 +50,18 @@ class UserController extends Controller
      * )
      */
     public function index(Request $request)
-{
-    // For testing, use user ID 1
-    $user = User::find(1);
-    if (!$user) {
-        return response()->json(['error' => 'No user found'], 404);
-    }
-    
-    $perPage = $request->input('per_page', 10);
-    
-    try {
-        // Get users that this user hasn't interacted with (excluding themselves)
-        $users = User::whereDoesntHave('userLikes', function($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })
-            ->where('id', '!=', $user->id)
-            ->paginate($perPage);
-            
-        return response()->json($users);
-    } catch (\Exception $e) {
-        \Log::error('Error in recommended users: ' . $e->getMessage());
-        return response()->json(['error' => 'Server error occurred'], 500);
-    }
+    {
+        $perPage = $request->input('per_page', 10);
+        
+        try {
+            // Get all users with pagination
+            $users = User::paginate($perPage);
+                
+            return response()->json($users);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching users: ' . $e->getMessage());
+            return response()->json(['error' => 'Server error occurred'], 500);
+        }
 }
 
     // 2. Like a user
@@ -154,8 +144,9 @@ class UserController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"disliked_user_id"},
-     *             @OA\Property(property="disliked_user_id", type="integer", example=3)
+     *             required={"disliker_id", "disliked_id"},
+     *             @OA\Property(property="disliker_id", type="integer", example=1),
+     *             @OA\Property(property="disliked_id", type="integer", example=2)
      *         )
      *     ),
      *     @OA\Response(
