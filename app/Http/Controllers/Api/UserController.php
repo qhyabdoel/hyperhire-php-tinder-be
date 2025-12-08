@@ -74,8 +74,9 @@ class UserController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"liked_user_id"},
-     *             @OA\Property(property="liked_user_id", type="integer", example=2)
+     *             required={"liker_id", "liked_id"},
+     *             @OA\Property(property="liker_id", type="integer", example=1),
+     *             @OA\Property(property="liked_id", type="integer", example=2)
      *         )
      *     ),
      *     @OA\Response(

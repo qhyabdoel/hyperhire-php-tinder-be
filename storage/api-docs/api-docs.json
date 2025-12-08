@@ -48,10 +48,15 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "liked_user_id"
+                                    "liker_id",
+                                    "liked_id"
                                 ],
                                 "properties": {
-                                    "liked_user_id": {
+                                    "liker_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "liked_id": {
                                         "type": "integer",
                                         "example": 2
                                     }
@@ -102,12 +107,17 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "disliked_user_id"
+                                    "disliker_id",
+                                    "disliked_id"
                                 ],
                                 "properties": {
-                                    "disliked_user_id": {
+                                    "disliker_id": {
                                         "type": "integer",
-                                        "example": 3
+                                        "example": 1
+                                    },
+                                    "disliked_id": {
+                                        "type": "integer",
+                                        "example": 2
                                     }
                                 },
                                 "type": "object"
