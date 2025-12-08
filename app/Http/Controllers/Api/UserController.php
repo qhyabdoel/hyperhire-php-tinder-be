@@ -54,15 +54,15 @@ class UserController extends Controller
         $perPage = $request->input('per_page', 10);
         
         try {
-            // Get all users with pagination
-            $users = User::paginate($perPage);
+            // Get all users with pagination, ordered by ID
+            $users = User::orderBy('id')->paginate($perPage);
                 
             return response()->json($users);
         } catch (\Exception $e) {
             \Log::error('Error fetching users: ' . $e->getMessage());
             return response()->json(['error' => 'Server error occurred'], 500);
         }
-}
+    }
 
     // 2. Like a user
     /**
