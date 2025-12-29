@@ -30,3 +30,5 @@ The sql schema is located in `database/schema.sql`
 3. Run migrations: `php artisan migrate`
 4. Generate an app encryption key: `php artisan key:generate`
 5. Start the server: `php artisan serve`
+
+test
